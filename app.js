@@ -10,7 +10,30 @@ const eventRouter = require("./router/event");
 const genreRouter = require("./router/genre");
 dotenv.config();
 const _URI = process.env.MONGODB_URI;
-
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/image");
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" +file.originalname) ;
+  },
+  
+});
+const fileFilter=(req, file, cb) => {
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      console.log("Only .png, .jpg and .jpeg format allowed!");
+    }
+  }
+  app.use(express.static('public'))
+app.use(multer({ storage: storage,fileFilter }).fields([{name:"image",maxCount:10}]));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.json());
 

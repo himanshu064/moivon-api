@@ -14,14 +14,18 @@ const eventSchema = new Schema(
         type: Number,
         required: true
     },
-    image:{
-        type: String,
+    images:{
+        type: [String],
+        required: true
     },
     dates:{
         type: Date,
         required: true
     },
-    genre: { type: Schema.Types.ObjectId, ref: 'GENRE' },
+    location: {
+        type: String,
+        required: true
+    },
     venue:{
         type: String,
         required: true
@@ -30,6 +34,10 @@ const eventSchema = new Schema(
         type: String,
         required: true
     },
+    published: {
+        type: Boolean
+    },
+    genre: { type: Schema.Types.ObjectId, ref: 'GENRE' },
     type:{
         type: [String],
 

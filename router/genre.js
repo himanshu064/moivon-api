@@ -7,6 +7,6 @@ const validate = require("../validationSchema/validationMiddleware")
 
 router.post("/",isAuth,genreValidation(),validate,genreController.postGenre);
 router.get("/",genreController.getGenre);
-router.put("/:id",genreController.updateGenre)
+router.put("/:id",isAuth,genreValidation(),validate,genreController.updateGenre)
 router.delete("/:id",genreController.deleteGenre)
 module.exports = router
