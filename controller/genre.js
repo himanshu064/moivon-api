@@ -24,7 +24,10 @@ exports.getGenre = async(req,res) => {
 exports.updateGenre = async(req,res) => {
     const id = req.params.id
     try {
-        const genre = await Genre.findOneAndUpdate({_id:id},{genre: req.body.genre});
+        console.log(id);
+        const genre = await Genre.findById({_id:id});
+        genre.genre = req.body.genre
+        genre.save();
         res.status(200).send({status:"success",data:genre})
     } catch (err) {
         console.log(err);
@@ -38,7 +41,6 @@ exports.deleteGenre = async(req,res) => {
         const genre = await Genre.findByIdAndRemove(id);
         res.status(200).send({status:"success",data:genre})
     } catch (err) {
-        console.log(err);
         res.status(500).send({status:"failed",error:err})
     }
 }

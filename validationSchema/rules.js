@@ -37,6 +37,40 @@ function loginValidation() {
   ];
 }
 
+function newPasswordValidation() {
+  return [
+    body("token")
+      .not()
+      .isEmpty()
+      .isString()
+      .withMessage("token field must be a string"),
+    body("password")
+      .not()
+      .isEmpty()
+      .isString()
+      .isLength({ min: 8 })
+      .withMessage("password field must be 8 char long & a string"),
+  ];
+}
+
+
+function changePasswordValidation() {
+  return [
+    body("password")
+    .not()
+    .isEmpty()
+    .isString()
+    .isLength({ min: 8 })
+    .withMessage("password field must be 8 char long & a string"),
+    body("newPassword")
+      .not()
+      .isEmpty()
+      .isString()
+      .isLength({ min: 8 })
+      .withMessage("newPassword field must be 8 char long & a string"),
+  ];
+}
+
 function genreValidation() {
   return [
     body("genre")
@@ -52,5 +86,7 @@ function genreValidation() {
 module.exports = {
   signupValidation,
   loginValidation,
-  genreValidation
+  genreValidation,
+  newPasswordValidation,
+  changePasswordValidation
 };

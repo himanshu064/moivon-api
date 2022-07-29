@@ -1,5 +1,6 @@
+// const 
 const Event = require("../model/event");
-
+const mongoose = require('mongoose')
 exports.getAllEvent = async (req,res) => {
    let page = req.query.page ?? 1
    let noOfEvent = req.query.size ?? 10
@@ -17,8 +18,10 @@ exports.getAllEvent = async (req,res) => {
 
 exports.getById = async (req, res) => {
    let id = req.params.id
+   console.log(id)
    try {
-      const event = await Event.findById({_id: id}).populate()
+      console.log(id);
+      const event = await Event.findById(id)
       if(event == undefined || null) {
          return res.status(404).send({status: "failed", error: "invalid id"})
       }
@@ -57,18 +60,18 @@ exports.createEvent = async (req,res) => {
 }
 
 exports.updateEvent = async (req,res) => {
-   let id = req.params.id
+   // let id = req.params.id
    let paths
    let imagePath = req.files;
    try {
-console.log(id );
-console.log("imagePath");
 
+//    var id = mongoose.Types.ObjectId(req.params.id)
+// console.log(typeof id);
       if (req.files !== undefined) {
           paths =  imagePaths(imagePath.image)
       }
-      const event = await Event.findById({_id:id}) 
-      
+      const event = await Event.findById(req.params.id)
+      console.log(event);
          event.title = req.body.title,
          event.decription = req.body.decription,
          event.price = req.body.price,
