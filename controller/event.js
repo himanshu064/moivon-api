@@ -18,7 +18,7 @@ exports.getAllEvent = async (req,res) => {
 exports.getById = async (req, res) => {
    let id = req.params.id
    try {
-      const event = await Event.findById({_id: id})
+      const event = await Event.findById({_id: id}).populate()
       if(event == undefined || null) {
          return res.status(404).send({status: "failed", error: "invalid id"})
       }
@@ -58,27 +58,31 @@ exports.createEvent = async (req,res) => {
 
 exports.updateEvent = async (req,res) => {
    let id = req.params.id
-   let paths, imagePath = req.files;
+   let paths
+   let imagePath = req.files;
    try {
+console.log(id );
+console.log("imagePath");
 
       if (req.files !== undefined) {
           paths =  imagePaths(imagePath.image)
       }
-      const event = await Event.findByIdAndUpdate(id, {
-     
-    
-        title: req.body.title,
-        decription: req.body.decription,
-        price: req.body.price,
-        dates: req.body.dates,
-        venue: req.body.venue,
-        images: paths ?? "",
-        location: req.body.location,
-        eventOrgDetail: req.body.eventOrgDetail,
-        published: req.body.published ?? false,
-      })
-   
+      const event = await Event.findById({_id:id}) 
+      
+         event.title = req.body.title,
+         event.decription = req.body.decription,
+         event.price = req.body.price,
+         event.dates = req.body.dates,
+         event.venue = req.body.venue,
+         event.images = paths ?? "",
+         event.location = req.body.location,
+         event.eventOrgDetail = req.body.eventOrgDetail,
+         event.published = req.body.published ?? false,
+      
+   event.save()
+   res.status(200).send({ status: "success", data: event });
    } catch (err) {
+      console.log(err);
        res.status(500).send({status:"failed",error: err}) 
    }
 }

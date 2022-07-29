@@ -24,7 +24,7 @@ exports.getGenre = async(req,res) => {
 exports.updateGenre = async(req,res) => {
     const id = req.params.id
     try {
-        const genre = await Genre.findByIdAndUpdate(id,{genre: req.body.genre});
+        const genre = await Genre.findOneAndUpdate({_id:id},{genre: req.body.genre});
         res.status(200).send({status:"success",data:genre})
     } catch (err) {
         console.log(err);

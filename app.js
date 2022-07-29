@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require("express");
 const app = express();
 const bodyparser = require("body-parser");
@@ -32,7 +33,8 @@ const fileFilter=(req, file, cb) => {
       console.log("Only .png, .jpg and .jpeg format allowed!");
     }
   }
-  app.use(express.static('public'))
+  app.use('/public', express.static(path.join(__dirname, 'public')));
+  // app.use('/public',express.static('public'))
 app.use(multer({ storage: storage,fileFilter }).fields([{name:"image",maxCount:10}]));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.json());
