@@ -14,7 +14,7 @@ exports.signup = async (req,res) => {
             password: hashedPassword
         })
         await user.save();
-        res.status(201).send({status:"success",data:user})
+        res.status(201).send({status:"success",data:{name:user.name,email:user.email}})
     } catch (err) {
         res.status(500).send({status:"failed",error: err}) 
     }
