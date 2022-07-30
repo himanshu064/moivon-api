@@ -59,7 +59,7 @@ app.use((err, req, res, next) => {
 });
 
 mongoose
-  .connect(_URI)
+  .connect(_URI,{ ignoreUndefined: true })
   .then((result) => {
     //  console.log(result)
 

@@ -1,16 +1,7 @@
 const User = require("../model/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
-const nodemailer = require("nodemailer")
-const sendGridTransport = require("nodemailer-sendgrid-transport");
-const { findOne } = require("../model/event");
 
-// const transpoter = nodemailer.createTransport(sendGridTransport({
-//     auth: {
-//         api_user: "",
-//         api_key: ""
-//     }
-// }))
 exports.signup = async (req,res) => {
    const name = req.body.name;
    const email = req.body.email;

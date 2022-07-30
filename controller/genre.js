@@ -26,6 +26,9 @@ exports.updateGenre = async(req,res) => {
     try {
         console.log(id);
         const genre = await Genre.findById({_id:id});
+        if(genre === null) {
+            return res.status(404).send({status:"failed", error:"invaild id"})
+         }
         genre.genre = req.body.genre
         genre.save();
         res.status(200).send({status:"success",data:genre})
