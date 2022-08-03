@@ -28,7 +28,6 @@ exports.getAllEvent = async (req, res) => {
     if (published !== undefined) {
       //converting string true/false into boolen true/false
       const isPublished = published.toLowerCase() === "true";
-console.log();
       query["published"] = isPublished;
     }
     if (startDate) {
@@ -38,19 +37,16 @@ console.log();
         { dates: { $lte: endDate } },
       ];
     }
-    
 
     const event = await Event.find(query).skip(skipEvent).limit(noOfEvent);
-    res
-      .status(200)
-      .send({
-        status: "success",
-        pageNo: page,
-        pageLimit: noOfEvent,
-        totalEvent: totalEvent.length,
-        eventPresent: event.length,
-        data: event,
-      });
+    res.status(200).send({
+      status: "success",
+      pageNo: page,
+      pageLimit: noOfEvent,
+      totalEvent: totalEvent.length,
+      eventPresent: event.length,
+      data: event,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send({ status: "failed", error: err });
@@ -79,7 +75,7 @@ exports.createEvent = async (req, res) => {
     if (req.files !== undefined) {
       const event = new Event({
         title: req.body.title,
-        decription: req.body.decription,
+        description: req.body.description,
         price: req.body.price,
         dates: req.body.dates,
         venue: req.body.venue,
@@ -92,13 +88,11 @@ exports.createEvent = async (req, res) => {
       console.log(req.files);
       res.status(201).send({ status: "success", data: event });
     } else {
-      res
-        .status(422)
-        .send({
-          status: "failed",
-          error:
-            "image field must not be empty or Only .png, .jpg and .jpeg format allowed!",
-        });
+      res.status(422).send({
+        status: "failed",
+        error:
+          "image field must not be empty or Only .png, .jpg and .jpeg format allowed!",
+      });
     }
   } catch (err) {
     console.log(err);
