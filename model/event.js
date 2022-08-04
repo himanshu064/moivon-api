@@ -14,10 +14,7 @@ const eventSchema = new Schema(
       type: Number,
       required: true,
     },
-    images: {
-      type: [String],
-      required: true,
-    },
+    images: Array,
     dates: {
       type: Date,
       required: true,

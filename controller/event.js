@@ -1,6 +1,7 @@
 const Event = require("../model/event");
 const moment = require("moment");
-
+const Image = require("../model/image");
+const fs = require("fs");
 exports.getAllEvent = async (req, res) => {
   let page = req.query.page ?? 1;
   let noOfEvent = req.query.size ?? 10;
@@ -18,7 +19,6 @@ exports.getAllEvent = async (req, res) => {
       // new Date
 
       // Boolean("false")
-      console.log(endDate);
     } else if (startDate === undefined && endDate !== undefined) {
       //if enddate present but start date not
       startDate = moment(moment().format("YYYY-MM-01")).toISOString();
@@ -30,7 +30,7 @@ exports.getAllEvent = async (req, res) => {
       query["published"] = isPublished;
     }
     if (startDate) {
-      console.log(startDate, endDate);
+  
       query["$and"] = [
         { dates: { $gte: startDate } },
         { dates: { $lte: endDate } },
@@ -39,6 +39,14 @@ exports.getAllEvent = async (req, res) => {
 
     const totalEvent = await Event.find(query);
     const event = await Event.find(query).skip(skipEvent).limit(noOfEvent);
+
+//adding image to each event
+    for(i=0;i<event.length;i++) {
+      const eventid = event[i]._id
+      const image = await Image.find({eventId:eventid})
+      event[i].images = image
+    } 
+
     res.status(200).send({
       status: "success",
       pageNo: page,
@@ -48,20 +56,21 @@ exports.getAllEvent = async (req, res) => {
       data: event,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
 };
 
 exports.getById = async (req, res) => {
   let id = req.params.id;
-  console.log(id);
+
   try {
-    console.log(id);
     const event = await Event.findById(id);
     if (event == undefined || null) {
       return res.status(404).send({ status: "failed", error: "invalid id" });
     }
+    const eventid = event._id
+    const image = await Image.find({eventId:eventid})
+    event.images = image
     res.status(200).send({ status: "success", data: event });
   } catch (err) {
     res.status(500).send({ status: "failed", error: err });
@@ -69,7 +78,7 @@ exports.getById = async (req, res) => {
 };
 exports.createEvent = async (req, res) => {
   let imagePath = req.files;
-  console.log(imagePath);
+  let imageArr = []
   try {
     let paths = imagePaths(imagePath.image);
     if (req.files !== undefined) {
@@ -79,13 +88,22 @@ exports.createEvent = async (req, res) => {
         price: req.body.price,
         dates: req.body.dates,
         venue: req.body.venue,
-        images: paths,
         location: req.body.location,
         eventOrgDetail: req.body.eventOrgDetail,
         published: req.body.published ?? false,
       });
       event.save();
-      console.log(req.files);
+      // looping on all images user has entered 
+      paths.forEach(path => {
+       let image ={
+          image: path,
+          eventId: event._id
+        }
+        imageArr.push(image)
+      })
+      //adding multi images
+      await Image.insertMany(imageArr)
+
       res.status(201).send({ status: "success", data: event });
     } else {
       res.status(422).send({
@@ -95,11 +113,24 @@ exports.createEvent = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
 };
 
+exports.deleteImage = async(req, res) => {
+  const id = req.params.id
+  try {
+    const image = await Image.findById(id)
+    if(image == null) {
+      return res.status(404).send({ status: "failed", error: "invalid id" });
+    }
+    deleteimage(image.image)
+    const result = await Image.findByIdAndRemove(id)
+    res.status(200).send({ status: "success", data: "image deleted successfully" });
+  } catch (err) {
+    res.status(500).send({ status: "failed", error: err });
+  }
+}
 exports.updateEvent = async (req, res) => {
   // let id = req.params.id
   let paths;
@@ -177,8 +208,8 @@ function imagePaths(files) {
   return arrayOfImage;
 }
 
-function deleteImage(path) {
-  fs.unlink("public/" + path, function (err) {
+function deleteimage(path) {
+  fs.unlink(path, function (err) {
     if (err) {
       console.log(err);
     }

@@ -10,5 +10,5 @@ router.post("/", eventValidation(), validate, eventController.createEvent);
 router.put("/:id", eventValidation(), validate, eventController.updateEvent);
 router.put("/status/:id", eventController.publishEvent);
 router.delete("/:id", eventController.deleteEvent);
-
+router.delete("/deleteimage/:id", eventController.deleteImage);
 module.exports = router;
