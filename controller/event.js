@@ -10,7 +10,6 @@ exports.getAllEvent = async (req, res) => {
   let endDate = req.query.endDate ?? undefined;
 
   try {
-    const totalEvent = await Event.find();
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
       endDate = moment(
@@ -38,6 +37,7 @@ exports.getAllEvent = async (req, res) => {
       ];
     }
 
+    const totalEvent = await Event.find(query);
     const event = await Event.find(query).skip(skipEvent).limit(noOfEvent);
     res.status(200).send({
       status: "success",
