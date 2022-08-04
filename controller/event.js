@@ -145,6 +145,30 @@ exports.deleteEvent = async (req, res) => {
   }
 };
 
+exports.publishEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event === null) {
+      return res.status(404).send({ status: "failed", error: "invaild id" });
+    }
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          published: req.body.published,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    res.status(200).send({ status: "success", data: updatedEvent });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "failed", error: err });
+  }
+};
+
 function imagePaths(files) {
   arrayOfImage = [];
   files.forEach((image) => {
