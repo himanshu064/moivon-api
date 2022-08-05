@@ -25,6 +25,7 @@ const eventSchema = new Schema(
     },
     venue: {
       type: String,
+      required: true,
     },
     eventOrgDetail: {
       type: String,

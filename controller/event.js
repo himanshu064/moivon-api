@@ -2,7 +2,6 @@ const Event = require("../model/event");
 const moment = require("moment");
 const Image = require("../model/image");
 const fs = require("fs");
-const { deleteMany } = require("../model/event");
 
 exports.getAllEvent = async (req, res) => {
   let page = req.query.page ?? 1;
@@ -82,8 +81,9 @@ exports.createEvent = async (req, res) => {
   let imagePath = req.files;
   let imageArr = []
   try {
-    let paths = imagePaths(imagePath.image);
-    if (req.files !== undefined) {
+    
+    if (imagePath.image !== undefined) {
+      let paths = imagePaths(imagePath.image);
       const event = new Event({
         title: req.body.title,
         description: req.body.description,
