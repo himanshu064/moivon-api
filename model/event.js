@@ -8,7 +8,7 @@ const eventSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
+
     },
     price: {
       type: Number,
@@ -25,14 +25,14 @@ const eventSchema = new Schema(
     },
     venue: {
       type: String,
-      required: true,
     },
     eventOrgDetail: {
       type: String,
-      required: true,
+ 
     },
     published: {
       type: Boolean,
+      default: false,
     },
     genre: { type: Schema.Types.ObjectId, ref: "GENRE" },
     type: {

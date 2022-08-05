@@ -6,17 +6,13 @@ function eventValidation() {
       .not()
       .isEmpty()
       .isString()
-      .isLength({ min: 4 })
       .withMessage(
-        "title field slould be string & its min length must be 4 char"
+        "title field slould be string"
       ),
     body("description")
-      .not()
-      .isEmpty()
       .isString()
-      .isLength({ min: 20 })
       .withMessage(
-        "description field slould be string & its min length must be 20 char"
+        "description field slould be string"
       ),
     body("price")
       .not()
@@ -31,24 +27,20 @@ function eventValidation() {
     body("location")
       .not()
       .isEmpty()
-      .isString()
-      .isLength({ min: 4 })
       .withMessage(
-        "location field slould be string & its min length must be 4 char"
+        "location field must not empty"
       ),
     body("venue")
       .not()
       .isEmpty()
       .withMessage(
-        "venue field slould be string & its min length must be 15 char"
+        "venue field slould not empty"
       ),
     body("eventOrgDetail")
-      .not()
-      .isEmpty()
+  
       .isString()
-      .isLength({ min: 15 })
       .withMessage(
-        "eventOrgDetail field slould be string & its min length must be 15 char"
+        "eventOrgDetail field slould be string"
       ),
   ];
 }
