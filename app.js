@@ -14,6 +14,20 @@ const multer = require("multer");
 const userRouter = require("./router/user");
 const eventRouter = require("./router/event");
 const genreRouter = require("./router/genre");
+
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(express.json());
+
+app.use((req, res, next) => {
+  res.append("Access-Control-Allow-Origin", ["*"]);
+  res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.append(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  next();
+});
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/image");
@@ -42,15 +56,7 @@ app.use(
     { name: "image", maxCount: 10 },
   ])
 );
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.json());
 
-app.use((req, res, next) => {
-  res.append("Access-Control-Allow-Origin", ["*"]);
-  res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.append("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
 app.use("/", userRouter);
 app.use("/events", eventRouter);
 app.use("/genres", genreRouter);
