@@ -10,7 +10,7 @@ exports.getAllEvent = async (req, res) => {
   let published = req.query.published ?? undefined;
   let startDate = req.query.startDate ?? undefined;
   let endDate = req.query.endDate ?? undefined;
-
+  let mostPopular = req.query.mostPopular ?? undefined
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -29,6 +29,11 @@ exports.getAllEvent = async (req, res) => {
       //converting string true/false into boolen true/false
       const isPublished = published.toLowerCase() === "true";
       query["published"] = isPublished;
+    }
+    if (mostPopular !== undefined) {
+      //converting string true/false into boolen true/false
+      const isMostPopular = mostPopular.toLowerCase() === "true";
+      query["mostPopular"] = isMostPopular;
     }
     if (startDate) {
   
@@ -93,6 +98,8 @@ exports.createEvent = async (req, res) => {
         location: req.body.location,
         eventOrgDetail: req.body.eventOrgDetail,
         published: req.body.published ?? false,
+        mostPopular: req.body.mostPopular ?? false,
+        upComing: req.body.upComing ?? false
       });
       event.save();
       // looping on all images user has entered 
@@ -151,6 +158,8 @@ exports.updateEvent = async (req, res) => {
       (event.location = req.body.location),
       (event.eventOrgDetail = req.body.eventOrgDetail),
       (event.published = req.body.published ?? false),
+      (event.mostPopular= req.body.mostPopular ?? false),
+      (event.upComing= req.body.upComing ?? false)
       event.save();
 
       if (imagePath.image) {

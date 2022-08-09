@@ -35,6 +35,14 @@ const eventSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    mostPopular: {
+      type: Boolean,
+      default: false,
+    },
+    upComing: {
+      type: Boolean,
+      default: false,
+    },
     genre: { type: Schema.Types.ObjectId, ref: "GENRE" },
     type: {
       type: [String],
