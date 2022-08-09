@@ -93,7 +93,7 @@ exports.createEvent = async (req, res) => {
   let imageArr = []
   try {
     
-    if (imagePath.image !== undefined) {
+    if (!imagePath && imagePath.image !== undefined) {
       let paths = imagePaths(imagePath.image);
       const event = new Event({
         title: req.body.title,

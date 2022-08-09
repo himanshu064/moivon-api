@@ -14,6 +14,7 @@ const multer = require("multer");
 const userRouter = require("./router/user");
 const eventRouter = require("./router/event");
 const genreRouter = require("./router/genre");
+const heroImageRouter = require("./router/heroImageDetails");
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.json());
@@ -46,7 +47,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(null, false);
-    console.log("Only .png, .jpg and .jpeg format allowed!");
+  //  console.log("Only .png, .jpg and .jpeg format allowed!");
   }
 };
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -60,6 +61,7 @@ app.use(
 app.use("/", userRouter);
 app.use("/events", eventRouter);
 app.use("/genres", genreRouter);
+app.use("/heroimage", heroImageRouter);
 app.use((err, req, res, next) => {
   console.log(err, "error here!");
   res.status(404).send({

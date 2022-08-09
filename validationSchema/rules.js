@@ -83,10 +83,24 @@ function genreValidation() {
       ),
   ];
 }
+
+function heroImageValidation() {
+  return [
+    body("description")
+      .not()
+      .isEmpty()
+      .isString()
+
+      .withMessage(
+        "description field slould be string"
+      ),
+  ];
+}
 module.exports = {
   signupValidation,
   loginValidation,
   genreValidation,
   newPasswordValidation,
-  changePasswordValidation
+  changePasswordValidation,
+  heroImageValidation
 };
