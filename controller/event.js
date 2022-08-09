@@ -11,6 +11,7 @@ exports.getAllEvent = async (req, res) => {
   let startDate = req.query.startDate ?? undefined;
   let endDate = req.query.endDate ?? undefined;
   let mostPopular = req.query.mostPopular ?? undefined
+  let upComing = req.query.upComing ?? undefined
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -34,6 +35,11 @@ exports.getAllEvent = async (req, res) => {
       //converting string true/false into boolen true/false
       const isMostPopular = mostPopular.toLowerCase() === "true";
       query["mostPopular"] = isMostPopular;
+    }
+    if (upComing !== undefined) {
+      //converting string true/false into boolen true/false
+      const isUpComing = upComing.toLowerCase() === "true";
+      query["upComing"] = isUpComing;
     }
     if (startDate) {
   
