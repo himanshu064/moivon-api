@@ -93,7 +93,7 @@ exports.createEvent = async (req, res) => {
   let imageArr = []
   try {
     
-    if (!imagePath && imagePath.image !== undefined) {
+    if (imagePath !== undefined && imagePath.image !== undefined) {
       let paths = imagePaths(imagePath.image);
       const event = new Event({
         title: req.body.title,
@@ -213,7 +213,47 @@ exports.deleteEvent = async (req, res) => {
     res.status(500).send({ status: "failed", error: err });
   }
 };
-
+exports.deleteEvents = async (req, res) => {
+  let eventIds = req.body.eventIds ?? [];
+  let arrOfObj = []
+  let eventIdObj
+  try {
+    console.log(eventIds);
+    if(eventIds.length == 0) {
+      return res.status(404).send({status:"failed", error: "invalid id array"})
+    }
+    for(i=0;i<eventIds.length;i++) {
+    //fetching all images related to event
+    const images = await Image.find({eventId: eventIds[i]})
+    //looping over and remove all images from file directory
+    if (images) {
+      images.forEach(image => {
+        deleteimage(image.image)
+      })
+      // finally delete all image records
+      a = await Image.deleteMany({eventId: eventIds[i]})
+      console.log(a);
+   }
+    }
+    // eventIds.forEach(id => {
+    //   eventIdObj = {
+    //     id: id
+    //   }
+    //   arrOfObj.push(eventIdObj)
+    // })
+    //then delete event 
+    
+    const event = await Event.findByIdAndRemove( {id: { $in: eventIds }});
+    console.log(event);
+    if (event == undefined || null) {
+      return res.status(404).send({ status: "failed", error: "invalid id" });
+    }
+    res.status(200).send({ status: "success", data: event });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "failed", error: err });
+  }
+}
 exports.publishEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
