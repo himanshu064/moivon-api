@@ -8,11 +8,10 @@ exports.post = async (req, res) => {
   try {
     if (imagePath !== undefined && imagePath.image !== undefined) {
       let paths = imagePaths(imagePath.image);
-
-      const heroImage = new HeroImageDetails({
+      let heroImage = new HeroImageDetails({
         description: req.body.description,
       });
-      heroImage.save();
+      heroImage = await heroImage.save();
       if (!heroImage) {
         res.status(404).send({
           status: "failed",
@@ -44,32 +43,53 @@ exports.post = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const heroImages = await HeroImageDetails.find();
-    res.status(200).send({ status: "success", data: heroImages });
+    const page = req.query.page ?? 1;
+    const size = req.query.size ?? 10;
+    const skip = (page - 1) * size;
+
+    const totalHeroImages = await HeroImageDetails.countDocuments();
+    const heroImages = await HeroImageDetails.find().skip(skip).limit(size);
+
+    //adding image to each event
+    for (i = 0; i < heroImages.length; i++) {
+      const heroImageId = heroImages[i]._id;
+      const image = await HeroImage.find({ heroImageId });
+      heroImages[i].images = image;
+    }
+
+    res.status(200).send({
+      status: "success",
+      data: heroImages,
+      pageNo: page,
+      pageLimit: size,
+      totalHeroImages,
+      heroImagesPresent: heroImages.length,
+    });
   } catch (err) {
     res.status(500).send({ status: "failed", error: err });
   }
 };
 exports.getById = async (req, res) => {
-    const id = req.params.id
-    try {
-      let heroImages = await HeroImageDetails.findById(id);
-      if (heroImages == undefined || null) {
-        return res.status(404).send({ status: "failed", error: "invalid id" });
-      }
-      const heroImageId = heroImages._id
-      const image = await HeroImage.find({heroImageId:heroImageId})
-      heroImages.images = image
-      res.status(200).send({ status: "success", data: heroImages });
-    } catch (err) {
-        console.log(err);
-      res.status(500).send({ status: "failed", error: err });
+  const id = req.params.id;
+  try {
+    let heroImages = await HeroImageDetails.findById(id);
+    if (heroImages == undefined || null) {
+      return res.status(404).send({ status: "failed", error: "invalid id" });
     }
-  };
-  
+    const heroImageId = heroImages._id;
+    const image = await HeroImage.find({ heroImageId: heroImageId });
+    heroImages.images = image;
+    res.status(200).send({ status: "success", data: heroImages });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "failed", error: err });
+  }
+};
+
 exports.update = async (req, res) => {
-  let paths,id = req.params.id
-    imageArr = [];
+  let paths,
+    id = req.params.id;
+  imageArr = [];
   let imagePath = req.files;
   try {
     const heroImage = await HeroImageDetails.findById({ _id: id });
@@ -79,7 +99,7 @@ exports.update = async (req, res) => {
     }
     heroImage.description = req.body.description;
     heroImage.save();
-    if (imagePath && imagePath.image) { 
+    if (imagePath && imagePath.image) {
       //if req.files in not empty then first create arr of image path
       paths = imagePaths(imagePath.image);
       paths.forEach((path) => {
@@ -91,7 +111,7 @@ exports.update = async (req, res) => {
       });
       //adding multi images
       await HeroImage.insertMany(imageArr);
- 
+
       heroImage.images = imageArr;
     }
     res.status(200).send({ status: "success", data: heroImage });
@@ -103,15 +123,15 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   const id = req.params.id;
   try {
-    const heroImage = await HeroImage.find({heroImageId: id})
+    const heroImage = await HeroImage.find({ heroImageId: id });
     if (heroImage) {
-        heroImage.forEach(image => {
-          deleteimage(image.image)
-        })
-        await HeroImage.deleteMany({heroImageId: id})
+      heroImage.forEach((image) => {
+        deleteimage(image.image);
+      });
+      await HeroImage.deleteMany({ heroImageId: id });
     }
     const heroImageDetail = await HeroImageDetails.findByIdAndRemove(id);
-    
+
     if (heroImageDetail == undefined || null) {
       return res.status(404).send({ status: "failed", error: "invalid id" });
     }
@@ -121,22 +141,24 @@ exports.delete = async (req, res) => {
     res.status(500).send({ status: "failed", error: err });
   }
 };
-exports.deleteImage = async(req, res) => {
-    const id = req.params.id
-    try {
-      const image = await HeroImage.findById(id)
- 
-      if(image == null) {
-        return res.status(404).send({ status: "failed", error: "invalid id" });
-      }
-      deleteimage(image.image)
-      const result = await HeroImage.findByIdAndRemove(id)
- 
-      res.status(200).send({ status: "success", data: "image deleted successfully" });
-    } catch (err) {
-      res.status(500).send({ status: "failed", error: err });
+exports.deleteImage = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const image = await HeroImage.findById(id);
+
+    if (image == null) {
+      return res.status(404).send({ status: "failed", error: "invalid id" });
     }
+    deleteimage(image.image);
+    const result = await HeroImage.findByIdAndRemove(id);
+
+    res
+      .status(200)
+      .send({ status: "success", data: "image deleted successfully" });
+  } catch (err) {
+    res.status(500).send({ status: "failed", error: err });
   }
+};
 function imagePaths(files) {
   arrayOfImage = [];
   files.forEach((image) => {
