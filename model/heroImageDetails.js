@@ -3,12 +3,11 @@ const Schema = mongoose.Schema;
 const heroImageDetailsSchema = new Schema(
   {
     images: Array,
-    description:{
-        type:String,
-        required: true
-    }
+    description: {
+      type: String,
+    },
   },
   { timestamps: true },
   { collection: "heroImageDetails" }
 );
-module.exports = mongoose.model("heroImageDetails", heroImageDetailsSchema)
+module.exports = mongoose.model("heroImageDetails", heroImageDetailsSchema);

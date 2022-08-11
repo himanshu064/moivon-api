@@ -53,15 +53,14 @@ function newPasswordValidation() {
   ];
 }
 
-
 function changePasswordValidation() {
   return [
     body("password")
-    .not()
-    .isEmpty()
-    .isString()
-    .isLength({ min: 8 })
-    .withMessage("password field must be 8 char long & a string"),
+      .not()
+      .isEmpty()
+      .isString()
+      .isLength({ min: 8 })
+      .withMessage("password field must be 8 char long & a string"),
     body("newPassword")
       .not()
       .isEmpty()
@@ -87,13 +86,9 @@ function genreValidation() {
 function heroImageValidation() {
   return [
     body("description")
-      .not()
-      .isEmpty()
       .isString()
 
-      .withMessage(
-        "description field slould be string"
-      ),
+      .withMessage("description field slould be string"),
   ];
 }
 module.exports = {
@@ -102,5 +97,5 @@ module.exports = {
   genreValidation,
   newPasswordValidation,
   changePasswordValidation,
-  heroImageValidation
+  heroImageValidation,
 };
