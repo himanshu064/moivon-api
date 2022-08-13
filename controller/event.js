@@ -214,10 +214,7 @@ exports.deleteEvent = async (req, res) => {
 };
 exports.deleteEvents = async (req, res) => {
   let eventIds = req.body.eventIds ?? [];
-  let arrOfObj = [];
-  let eventIdObj;
   try {
-    console.log(eventIds);
     if (eventIds.length == 0) {
       return res
         .status(404)
@@ -236,17 +233,11 @@ exports.deleteEvents = async (req, res) => {
         console.log(a);
       }
     }
-    // eventIds.forEach(id => {
-    //   eventIdObj = {
-    //     id: id
-    //   }
-    //   arrOfObj.push(eventIdObj)
-    // })
-    //then delete event
-
-    const event = await Event.findByIdAndRemove({ id: { $in: eventIds } });
+    const event = await Event.deleteMany({
+      _id: { $in: eventIds },
+    });
     console.log(event);
-    if (event == undefined || null) {
+    if (!event) {
       return res.status(404).send({ status: "failed", error: "invalid id" });
     }
     res.status(200).send({ status: "success", data: event });
