@@ -9,7 +9,7 @@ const express = require("express");
 const app = express();
 const bodyparser = require("body-parser");
 const mongoose = require("mongoose");
-
+const { v4: uuidv4 }  = require("uuid")
 const multer = require("multer");
 const userRouter = require("./router/user");
 const eventRouter = require("./router/event");
@@ -34,8 +34,9 @@ const storage = multer.diskStorage({
     cb(null, "public/image");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
+    let extArray = file.mimetype.split("/");
+    let extension = extArray[extArray.length - 1];
+    cb(null, uuidv4()+'.' +extension);
   },
 });
 const fileFilter = (req, file, cb) => {
