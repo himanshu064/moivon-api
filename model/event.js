@@ -14,7 +14,10 @@ const eventSchema = new Schema(
       type: Number,
       required: true,
     },
-    images: Array,
+    images: [{
+      type: mongoose.Schema.Types.ObjectId,
+        ref: "image"
+    }],
     dates: {
       type: Date,
       required: true,

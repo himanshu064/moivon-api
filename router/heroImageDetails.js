@@ -9,6 +9,7 @@ router.post("/",isAuth,heroImageValidation(),validate,heroImageController.post);
  router.get("/",heroImageController.get);
  router.get("/:id",heroImageController.getById);
  router.put("/:id",isAuth,heroImageValidation(),validate,heroImageController.update)
+ router.delete("/deleteimage",isAuth,heroImageController.deleteImage)
  router.delete("/:id",isAuth,heroImageController.delete)
- router.delete("/deleteimage/:id",isAuth,heroImageController.deleteImage)
+
 module.exports = router

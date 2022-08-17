@@ -6,10 +6,7 @@ const heroImageSchema = new Schema(
         type:String,
         required: true
     },
-    heroImageId: {
-        type:String,
-        required: true
-    },
+
   },
   { timestamps: true },
   { collection: "heroImage" }

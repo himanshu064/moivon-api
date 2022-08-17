@@ -6,10 +6,7 @@ const imageSchema = new Schema(
         type:String,
         required: true
     },
-    eventId: {
-        type:String,
-        required: true
-    },
+   
   },
   { timestamps: true },
   { collection: "image" }

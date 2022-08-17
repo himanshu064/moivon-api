@@ -6,6 +6,10 @@ const heroImageDetailsSchema = new Schema(
     description: {
       type: String,
     },
+    images: [{
+      type: mongoose.Schema.Types.ObjectId,
+        ref: "heroImage"
+    }],
   },
   { timestamps: true },
   { collection: "heroImageDetails" }
