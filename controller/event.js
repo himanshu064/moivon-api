@@ -44,14 +44,14 @@ exports.getAllEvent = async (req, res) => {
     }
     if (startDate) {
       query["$and"] = [
-        { dates: { $gte: startDate } },
-        { dates: { $lte: endDate } },
+        { startDate: { $gte: startDate } },
+        { startDate: { $lte: endDate } },
       ];
     }
 
     const totalEvent = await Event.find(query);
     const event = await Event.find(query)
-      .populate("images")
+      .populate("images genre")
       .skip(skipEvent)
       .limit(noOfEvent);
 
@@ -80,13 +80,11 @@ exports.getById = async (req, res) => {
   let id = req.params.id;
 
   try {
-    const event = await Event.findById(id).populate("images");
+    const event = await Event.findById(id).populate("images genre");
     if (event == undefined || null) {
       return res.status(404).send({ status: "failed", error: "invalid id" });
     }
-    // const eventid = event._id;
-    // const image = await Image.find({ eventId: eventid });
-    // event.images = image;
+
     res.status(200).send({ status: "success", data: event });
   } catch (err) {
     res.status(500).send({ status: "failed", error: err });
@@ -111,8 +109,9 @@ exports.createEvent = async (req, res) => {
       const event = new Event({
         title: req.body.title,
         description: req.body.description,
-        price: req.body.price,
-        dates: req.body.dates,
+        price: req.body.price ?? 0,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
         venue: req.body.venue,
         location: req.body.location,
         images: imageIds,
@@ -120,6 +119,7 @@ exports.createEvent = async (req, res) => {
         published: req.body.published ?? false,
         mostPopular: req.body.mostPopular ?? false,
         upComing: req.body.upComing ?? false,
+        genre:req.body.genre
       });
       event.save();
       // looping on all images user has entered
@@ -178,7 +178,8 @@ exports.updateEvent = async (req, res) => {
     event.title = req.body.title;
     event.decription = req.body.decription;
     event.price = req.body.price;
-    event.dates = req.body.dates;
+    event.startDate = req.body.startDate,
+    event.endDate = req.body.endDate,
     event.venue = req.body.venue;
     event.location = req.body.location;
     event.eventOrgDetail = req.body.eventOrgDetail;

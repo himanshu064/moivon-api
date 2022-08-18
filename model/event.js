@@ -8,17 +8,22 @@ const eventSchema = new Schema(
     },
     description: {
       type: String,
-
     },
     price: {
       type: Number,
       required: true,
     },
-    images: [{
-      type: mongoose.Schema.Types.ObjectId,
-        ref: "image"
-    }],
-    dates: {
+    images: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "image",
+      },
+    ],
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
       type: Date,
       required: true,
     },
@@ -32,7 +37,6 @@ const eventSchema = new Schema(
     },
     eventOrgDetail: {
       type: String,
- 
     },
     published: {
       type: Boolean,
@@ -46,7 +50,10 @@ const eventSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    genre: { type: Schema.Types.ObjectId, ref: "GENRE" },
+    genre: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "genre",
+    },
     type: {
       type: [String],
     },
