@@ -31,7 +31,7 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email: email });
     if (user == null) {
       return res
-        .status(403)
+        .status(404)
         .send({ status: "failed", error: "invalid email or password" });
     }
     //comparing password using bcrypt
@@ -57,14 +57,14 @@ exports.login = async (req, res) => {
           refreshToken,
         });
       } else {
-        res.status(403).send({
+        res.status(404).send({
           status: "failed",
           error: "invaild username or password",
         });
       }
     });
   } catch (err) {
-    console.log(err);
+ 
     res.status(500).send({ status: "failed", error: err });
   }
 };
@@ -74,7 +74,7 @@ exports.refreshToken = async (req, res) => {
     const token = req.body.refreshToken;
     //checking if token is empty
     if (!token) {
-      return res.status(403).send("A token is required for authentication");
+      return res.status(404).send("A token is required for authentication");
     }
     //decoding token
     decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
@@ -86,7 +86,7 @@ exports.refreshToken = async (req, res) => {
     );
     res.status(201).send({ status: "success", newToken });
   } catch (error) {
-    res.status(403).send({ status: "failed", error });
+    res.status(401).send({ status: "failed", error });
   }
 };
 

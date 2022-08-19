@@ -182,6 +182,7 @@ exports.updateEvent = async (req, res) => {
     event.endDate = req.body.endDate,
     event.venue = req.body.venue;
     event.location = req.body.location;
+    event.genre = req.body.genre;
     event.eventOrgDetail = req.body.eventOrgDetail;
     event.published = req.body.published ?? false;
     event.mostPopular = req.body.mostPopular ?? false;

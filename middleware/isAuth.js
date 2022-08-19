@@ -7,9 +7,9 @@ isAuth = async (req, res, next) => {
 
   if (!token) {
     return res
-      .status(403)
+      .status(404)
       .send({
-        status: "failed",statusCode:403,
+        status: "failed",statusCode:404,
         error: "A token is required for authentication",
       });
   }
