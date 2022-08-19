@@ -50,6 +50,10 @@ exports.getAllEvent = async (req, res) => {
     }
 
     const totalEvent = await Event.find(query);
+    const totalMostPopular = await Event.find({
+      mostPopular: true,
+    }).countDocuments();
+
     const event = await Event.find(query)
       .populate("images genre")
       .skip(skipEvent)
@@ -69,6 +73,7 @@ exports.getAllEvent = async (req, res) => {
       totalEvent: totalEvent.length,
       eventPresent: event.length,
       data: event,
+      totalMostPopular,
     });
   } catch (err) {
     console.log(err);
