@@ -6,20 +6,17 @@ function eventValidation() {
       .not()
       .isEmpty()
       .isString()
-      .withMessage(
-        "title field should be string"
-      ),
+      .withMessage("title field should be string"),
     body("description")
       .isString()
-      .withMessage(
-        "description field should be string"
-      ),
+      .withMessage("description field should be string"),
     body("price")
       // .not()
       // .isEmpty()
+      .default(0)
       .isNumeric()
       .withMessage("price field should be number"),
-      body("startDate")
+    body("startDate")
       .not()
       .isEmpty()
       .isString()
@@ -32,21 +29,11 @@ function eventValidation() {
     body("location")
       .not()
       .isEmpty()
-      .withMessage(
-        "location field must not empty"
-      ),
-    body("venue")
-      .not()
-      .isEmpty()
-      .withMessage(
-        "venue field should not empty"
-      ),
+      .withMessage("location field must not empty"),
+    body("venue").not().isEmpty().withMessage("venue field should not empty"),
     body("eventOrgDetail")
-  
       .isString()
-      .withMessage(
-        "eventOrgDetail field should be string"
-      ),
+      .withMessage("eventOrgDetail field should be string"),
   ];
 }
 

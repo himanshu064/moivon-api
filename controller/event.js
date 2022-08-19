@@ -114,7 +114,7 @@ exports.createEvent = async (req, res) => {
       const event = new Event({
         title: req.body.title,
         description: req.body.description,
-        price: req.body.price ?? 0,
+        price: req.body.price || 0,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         venue: req.body.venue,
