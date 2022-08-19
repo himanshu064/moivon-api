@@ -121,9 +121,9 @@ exports.createEvent = async (req, res) => {
         location: req.body.location,
         images: imageIds,
         eventOrgDetail: req.body.eventOrgDetail,
-        published: req.body.published ?? false,
-        mostPopular: req.body.mostPopular ?? false,
-        upComing: req.body.upComing ?? false,
+        published: req.body.published || false,
+        mostPopular: req.body.mostPopular || false,
+        upComing: req.body.upComing || false,
         genre: req.body.genre,
       });
       event.save();
@@ -189,9 +189,9 @@ exports.updateEvent = async (req, res) => {
     event.location = req.body.location;
     event.genre = req.body.genre;
     event.eventOrgDetail = req.body.eventOrgDetail;
-    event.published = req.body.published ?? false;
-    event.mostPopular = req.body.mostPopular ?? false;
-    event.upComing = req.body.upComing ?? false;
+    event.published = req.body.published || false;
+    event.mostPopular = req.body.mostPopular || false;
+    event.upComing = req.body.upComing || false;
     event.save();
     if (imagePath.image) {
       //if req.files in not empty then first create arr of image path
