@@ -23,7 +23,7 @@ function eventValidation() {
       .not()
       .isEmpty()
       .isString()
-      .withMessage("endDate field should be string"),
+      .withMessage("startDate field should be string"),
     body("endDate")
       .not()
       .isEmpty()
