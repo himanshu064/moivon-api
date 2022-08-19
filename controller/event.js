@@ -119,7 +119,7 @@ exports.createEvent = async (req, res) => {
         published: req.body.published ?? false,
         mostPopular: req.body.mostPopular ?? false,
         upComing: req.body.upComing ?? false,
-        genre:req.body.genre
+        genre: req.body.genre,
       });
       event.save();
       // looping on all images user has entered
@@ -176,10 +176,10 @@ exports.updateEvent = async (req, res) => {
       return res.status(404).send({ status: "failed", error: "invaild id" });
     }
     event.title = req.body.title;
-    event.decription = req.body.decription;
+    event.description = req.body.description;
     event.price = req.body.price;
-    event.startDate = req.body.startDate,
-    event.endDate = req.body.endDate,
+    event.startDate = req.body.startDate;
+    event.endDate = req.body.endDate;
     event.venue = req.body.venue;
     event.location = req.body.location;
     event.genre = req.body.genre;
@@ -199,12 +199,13 @@ exports.updateEvent = async (req, res) => {
       });
       //adding multi images
       let data = await Image.insertMany(imageArr);
-         imageIds = data.map((e) => mongoose.Types.ObjectId(e.id));
+      imageIds = data.map((e) => mongoose.Types.ObjectId(e.id));
       // event.images = event.images.push(...imageIds);
-      await Event.findByIdAndUpdate({ _id: req.params.id },
-        
-        { $push: { images: imageIds } })
-    
+      await Event.findByIdAndUpdate(
+        { _id: req.params.id },
+
+        { $push: { images: imageIds } }
+      );
     }
     res.status(200).send({ status: "success", data: event });
   } catch (err) {
