@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const fs = require("fs")
+const fs = require("fs");
 const port = process.env.PORT || 5000;
 const _URI = process.env.MONGODB_URI;
 
@@ -9,7 +9,7 @@ const express = require("express");
 const app = express();
 const bodyparser = require("body-parser");
 const mongoose = require("mongoose");
-const { v4: uuidv4 }  = require("uuid")
+const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
 const userRouter = require("./router/user");
 const eventRouter = require("./router/event");
@@ -29,13 +29,19 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
-    if (fs.existsSync("./public/image")) {
-      console.log("exist");
+  path.join(__dirname, "public", "image");
+  if (fs.existsSync(path.join(__dirname, "public", "image"))) {
+    console.log("exist");
+  } else {
+    console.log("!exist");
+    if (fs.existsSync(path.join(__dirname, "public"))) {
+      fs.mkdirSync(path.join(__dirname, "public", "image"));
     } else {
-      console.log("!exist");
-      fs.mkdirSync("./public/image");
+      fs.mkdirSync(path.join(__dirname, "public"));
+      fs.mkdirSync(path.join(__dirname, "public", "image"));
     }
-    next();
+  }
+  next();
 });
 
 const storage = multer.diskStorage({
@@ -45,7 +51,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     let extArray = file.mimetype.split("/");
     let extension = extArray[extArray.length - 1];
-    cb(null, uuidv4()+'.' +extension);
+    cb(null, uuidv4() + "." + extension);
   },
 });
 const fileFilter = (req, file, cb) => {
@@ -57,7 +63,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(null, false);
-  //  console.log("Only .png, .jpg and .jpeg format allowed!");
+    //  console.log("Only .png, .jpg and .jpeg format allowed!");
   }
 };
 app.use("/public", express.static(path.join(__dirname, "public")));
