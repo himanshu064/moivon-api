@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
-
+const fs = require("fs")
 const port = process.env.PORT || 5000;
 const _URI = process.env.MONGODB_URI;
 
@@ -27,6 +27,15 @@ app.use((req, res, next) => {
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   next();
+});
+app.use((req, res, next) => {
+    if (fs.existsSync("./public/image")) {
+      console.log("exist");
+    } else {
+      console.log("!exist");
+      fs.mkdirSync("./public/image");
+    }
+    next();
 });
 
 const storage = multer.diskStorage({
