@@ -3,6 +3,8 @@ const moment = require("moment");
 const Image = require("../model/image");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const Genre = require("../model/genre");
+var ObjectId = require("mongoose").Types.ObjectId;
 
 exports.getAllEvent = async (req, res) => {
   let page = req.query.page ?? 1;
@@ -13,6 +15,7 @@ exports.getAllEvent = async (req, res) => {
   let endDate = req.query.endDate ?? undefined;
   let mostPopular = req.query.mostPopular ?? undefined;
   let upComing = req.query.upComing ?? undefined;
+  let genreId = req.query.genreId || undefined;
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -41,6 +44,15 @@ exports.getAllEvent = async (req, res) => {
       //converting string true/false into boolen true/false
       const isUpComing = upComing.toLowerCase() === "true";
       query["upComing"] = isUpComing;
+    }
+    if (genreId !== undefined) {
+      const result = await checkId(genreId, Genre, ObjectId);
+      if (!result) {
+        return res
+          .status(404)
+          .send({ status: "failed", error: "genre Id is invalid" });
+      }
+      query["genre"] = genreId;
     }
     if (startDate) {
       query["$and"] = [
@@ -98,7 +110,15 @@ exports.getById = async (req, res) => {
 exports.createEvent = async (req, res) => {
   let imagePath = req.files;
   let imageArr = [];
+  let id = req.body.genre;
   try {
+    console.log(id);
+    const result = await checkId(id, Genre, ObjectId);
+    if (!result) {
+      return res
+        .status(404)
+        .send({ status: "failed", error: "genre Id is invalid" });
+    }
     if (imagePath !== undefined && imagePath.image !== undefined) {
       let paths = imagePaths(imagePath.image);
 
@@ -173,12 +193,19 @@ exports.deleteImage = async (req, res) => {
 };
 exports.updateEvent = async (req, res) => {
   let paths,
-    imageArr = [];
+    genreId = req.body.genre;
+  let imageArr = [];
   let imagePath = req.files;
   try {
     const event = await Event.findById(req.params.id);
     if (event === null) {
       return res.status(404).send({ status: "failed", error: "invaild id" });
+    }
+    const result = await checkId(genreId, Genre, ObjectId);
+    if (!result) {
+      return res
+        .status(404)
+        .send({ status: "failed", error: "genre Id is invalid" });
     }
     event.title = req.body.title;
     event.description = req.body.description;
@@ -320,4 +347,17 @@ function deleteimage(path) {
     }
     console.log("image deleted");
   });
+}
+
+async function checkId(id, Model, ObjectId) {
+  if (ObjectId.isValid(id)) {
+    const data = await Model.findById(id);
+    if (data) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 }
