@@ -233,16 +233,12 @@ exports.updateEvent = async (req, res) => {
       }
     }
 
-  //upComing Seq swap
+    //upComing Seq swap
     if (req.body.upComingSeq && req.body.upComingSeq !== "null") {
       const data = await Event.findOne({
         upComingSeq: req.body.upComingSeq,
       });
-      if (
-        data &&
-        data.upComingSeq !== event.upComingSeq &&
-        req.body.upComing
-      ) {
+      if (data && data.upComingSeq !== event.upComingSeq && req.body.upComing) {
         data.upComingSeq = event.upComingSeq;
         data.save();
       }
@@ -257,11 +253,18 @@ exports.updateEvent = async (req, res) => {
     event.genre = req.body.genre;
     // if (!req.body.mostPopular) {
     //   event.mostPopularSeq = -1;
-    // } else 
-    if (!req.body.mostPopularSeq || req.body.mostPopularSeq !== "null") {
+    // } else
+    if (
+      req.body.mostPopularSeq &&
+      (req.body.mostPopularSeq !== "null" ||
+        req.body.mostPopularSeq !== "undefined")
+    ) {
       event.mostPopularSeq = req.body.mostPopularSeq;
     }
-    if (!req.body.upComingSeq || req.body.upComingSeq !== "null") {
+    if (
+      req.body.upComingSeq &&
+      (req.body.upComingSeq !== "null" || req.body.upComingSeq !== "undefined")
+    ) {
       event.upComingSeq = req.body.upComingSeq;
     }
     event.eventOrgDetail = req.body.eventOrgDetail;
