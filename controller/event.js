@@ -218,6 +218,7 @@ exports.updateEvent = async (req, res) => {
         .status(404)
         .send({ status: "failed", error: "genre Id is invalid" });
     }
+    //mostPopular Seq swap
     if (req.body.mostPopularSeq && req.body.mostPopularSeq !== "null") {
       const data = await Event.findOne({
         mostPopularSeq: req.body.mostPopularSeq,
@@ -232,10 +233,20 @@ exports.updateEvent = async (req, res) => {
       }
     }
 
-    const upComingData = await Event.findOne({
-      upComingSeq: req.body.upComingSeq,
-    });
-
+  //upComing Seq swap
+    if (req.body.upComingSeq && req.body.upComingSeq !== "null") {
+      const data = await Event.findOne({
+        upComingSeq: req.body.upComingSeq,
+      });
+      if (
+        data &&
+        data.upComingSeq !== event.upComingSeq &&
+        req.body.upComing
+      ) {
+        data.upComingSeq = event.upComingSeq;
+        data.save();
+      }
+    }
     event.title = req.body.title;
     event.description = req.body.description;
     event.price = req.body.price;
@@ -244,10 +255,14 @@ exports.updateEvent = async (req, res) => {
     event.venue = req.body.venue;
     event.location = req.body.location;
     event.genre = req.body.genre;
-    if (!req.body.mostPopular) {
-      event.mostPopularSeq = -1;
-    } else if (!req.body.mostPopularSeq || req.body.mostPopularSeq !== "null") {
+    // if (!req.body.mostPopular) {
+    //   event.mostPopularSeq = -1;
+    // } else 
+    if (!req.body.mostPopularSeq || req.body.mostPopularSeq !== "null") {
       event.mostPopularSeq = req.body.mostPopularSeq;
+    }
+    if (!req.body.upComingSeq || req.body.upComingSeq !== "null") {
+      event.upComingSeq = req.body.upComingSeq;
     }
     event.eventOrgDetail = req.body.eventOrgDetail;
     event.published = req.body.published || false;
