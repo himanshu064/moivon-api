@@ -58,6 +58,12 @@ const eventSchema = new Schema(
     type: {
       type: [String],
     },
+    mostPopularSeq: {
+      type: Number,
+    },
+    upComingSeq: {
+      type: Number,
+    },
   },
   { timestamps: true },
   { collection: "events" }

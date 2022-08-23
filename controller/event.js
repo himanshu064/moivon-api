@@ -16,8 +16,8 @@ exports.getAllEvent = async (req, res) => {
   let mostPopular = req.query.mostPopular ?? undefined;
   let upComing = req.query.upComing ?? undefined;
   let genreId = req.query.genreId || undefined;
-  let sort = req.query.sort || undefined
-  let order = req.query.order || undefined
+  let sort = req.query.sort || undefined;
+  let order = req.query.order || undefined;
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -31,7 +31,8 @@ exports.getAllEvent = async (req, res) => {
       //if enddate present but start date not
       startDate = moment(moment().format("YYYY-MM-01")).toISOString();
     }
-    let query = {},sortQuery = {};
+    let query = {},
+      sortQuery = {};
     if (published !== undefined) {
       //converting string true/false into boolen true/false
       const isPublished = published.toLowerCase() === "true";
@@ -62,20 +63,20 @@ exports.getAllEvent = async (req, res) => {
         { startDate: { $lte: endDate } },
       ];
     }
-    if(sort !== undefined) {
-      if(order !== undefined) {
-        sortQuery[sort] = order
+    if (sort !== undefined) {
+      if (order !== undefined) {
+        sortQuery[sort] = order;
       } else {
-        sortQuery[sort] = "asc"
+        sortQuery[sort] = "asc";
       }
-      
     }
-    const totalEvent = await Event.find(query).sort({price: 'asc'})
+    const totalEvent = await Event.find(query).sort({ price: "asc" });
     const totalMostPopular = await Event.find({
       mostPopular: true,
     }).countDocuments();
 
-    const event = await Event.find(query).sort(sortQuery)
+    const event = await Event.find(query)
+      .sort(sortQuery)
       .populate("images genre")
       .skip(skipEvent)
       .limit(noOfEvent);
@@ -206,16 +207,31 @@ exports.updateEvent = async (req, res) => {
   let imageArr = [];
   let imagePath = req.files;
   try {
+    //checking if event id is valid
     const event = await Event.findById(req.params.id);
     if (event === null) {
       return res.status(404).send({ status: "failed", error: "invaild id" });
     }
+    //checking if genreId is valid
     const result = await checkId(genreId, Genre, ObjectId);
     if (!result) {
       return res
         .status(404)
         .send({ status: "failed", error: "genre Id is invalid" });
     }
+    
+    const data = await Event.findOne({mostPopularSeq:req.body.mostPopularSeq})
+    console.log(data);
+    console.log(data.mostPopularSeq !== event.mostPopularSeq);
+    if(data && data.mostPopularSeq !== event.mostPopularSeq && req.body.mostPopular) {
+      // if(event.mostPopularSeq === -1) {
+      //   data.mostPopularSeq = 
+      // } else {
+        data.mostPopularSeq = event.mostPopularSeq
+        data.save();
+      // }
+    }
+
     event.title = req.body.title;
     event.description = req.body.description;
     event.price = req.body.price;
@@ -224,6 +240,11 @@ exports.updateEvent = async (req, res) => {
     event.venue = req.body.venue;
     event.location = req.body.location;
     event.genre = req.body.genre;
+    if(!req.body.mostPopular) {
+      event.mostPopularSeq = -1
+    } else {
+      event.mostPopularSeq = req.body.mostPopularSeq
+    }
     event.eventOrgDetail = req.body.eventOrgDetail;
     event.published = req.body.published || false;
     event.mostPopular = req.body.mostPopular || false;
@@ -264,7 +285,7 @@ exports.deleteEvent = async (req, res) => {
     //looping over and remove all images from file directory
     if (event) {
       for (imageId of event.images) {
-        data = await Image.findOne({id:imageId.toHexString()});
+        data = await Image.findOne({ id: imageId.toHexString() });
         deleteimage(data.image);
       }
       // finally delete all image records
