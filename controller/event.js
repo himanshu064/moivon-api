@@ -122,7 +122,7 @@ exports.createEvent = async (req, res) => {
   let imageArr = [];
   let id = req.body.genre;
   try {
-    console.log(id);
+
     const result = await checkId(id, Genre, ObjectId);
     if (!result) {
       return res
@@ -150,6 +150,7 @@ exports.createEvent = async (req, res) => {
         venue: req.body.venue,
         location: req.body.location,
         images: imageIds,
+        mostPopularSeq: -1,
         eventOrgDetail: req.body.eventOrgDetail,
         published: req.body.published || false,
         mostPopular: req.body.mostPopular || false,
@@ -219,18 +220,15 @@ exports.updateEvent = async (req, res) => {
         .status(404)
         .send({ status: "failed", error: "genre Id is invalid" });
     }
-    
-    const data = await Event.findOne({mostPopularSeq:req.body.mostPopularSeq})
-    console.log(data);
-    console.log(data.mostPopularSeq !== event.mostPopularSeq);
-    if(data && data.mostPopularSeq !== event.mostPopularSeq && req.body.mostPopular) {
-      // if(event.mostPopularSeq === -1) {
-      //   data.mostPopularSeq = 
-      // } else {
-        data.mostPopularSeq = event.mostPopularSeq
-        data.save();
-      // }
+    if(req.body.mostPopularSeq) {
+      const data = await Event.findOne({mostPopularSeq:req.body.mostPopularSeq})
+      if(data && data.mostPopularSeq !== event.mostPopularSeq && req.body.mostPopular) {
+          data.mostPopularSeq = event.mostPopularSeq
+          data.save();
+      }
     }
+   
+const upComingData = await Event.findOne({upComingSeq: req.body.upComingSeq})
 
     event.title = req.body.title;
     event.description = req.body.description;
