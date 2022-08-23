@@ -16,6 +16,8 @@ exports.getAllEvent = async (req, res) => {
   let mostPopular = req.query.mostPopular ?? undefined;
   let upComing = req.query.upComing ?? undefined;
   let genreId = req.query.genreId || undefined;
+  let sort = req.query.sort || undefined
+  let order = req.query.order || undefined
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -29,7 +31,7 @@ exports.getAllEvent = async (req, res) => {
       //if enddate present but start date not
       startDate = moment(moment().format("YYYY-MM-01")).toISOString();
     }
-    let query = {};
+    let query = {},sortQuery = {};
     if (published !== undefined) {
       //converting string true/false into boolen true/false
       const isPublished = published.toLowerCase() === "true";
@@ -60,13 +62,20 @@ exports.getAllEvent = async (req, res) => {
         { startDate: { $lte: endDate } },
       ];
     }
-
-    const totalEvent = await Event.find(query);
+    if(sort !== undefined) {
+      if(order !== undefined) {
+        sortQuery[sort] = order
+      } else {
+        sortQuery[sort] = "asc"
+      }
+      
+    }
+    const totalEvent = await Event.find(query).sort({price: 'asc'})
     const totalMostPopular = await Event.find({
       mostPopular: true,
     }).countDocuments();
 
-    const event = await Event.find(query)
+    const event = await Event.find(query).sort(sortQuery)
       .populate("images genre")
       .skip(skipEvent)
       .limit(noOfEvent);
