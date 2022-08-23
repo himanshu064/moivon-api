@@ -28,6 +28,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+//check if public & file exist or not
 app.use((req, res, next) => {
   path.join(__dirname, "public", "image");
   if (fs.existsSync(path.join(__dirname, "public", "image"))) {

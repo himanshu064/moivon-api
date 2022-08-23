@@ -255,7 +255,7 @@ exports.deleteEvent = async (req, res) => {
     //looping over and remove all images from file directory
     if (event) {
       for (imageId of event.images) {
-        data = await Image.findById(imageId);
+        data = await Image.findOne({id:imageId.toHexString()});
         deleteimage(data.image);
       }
       // finally delete all image records
@@ -271,6 +271,7 @@ exports.deleteEvent = async (req, res) => {
     }
     res.status(200).send({ status: "success", data: event });
   } catch (err) {
+    console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
 };
@@ -288,7 +289,8 @@ exports.deleteEvents = async (req, res) => {
 
       if (event) {
         for (imageId of event.images) {
-          data = await Image.findById(imageId);
+          const data = await Image.findOne({ id: imageId.toHexString() });
+          // data = await Image.findById(imageId);
           deleteimage(data.image);
         }
         // finally delete all image records
@@ -305,6 +307,7 @@ exports.deleteEvents = async (req, res) => {
     }
     res.status(200).send({ status: "success", data: event });
   } catch (err) {
+    console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
 };
