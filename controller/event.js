@@ -220,7 +220,7 @@ exports.updateEvent = async (req, res) => {
         .status(404)
         .send({ status: "failed", error: "genre Id is invalid" });
     }
-    if(req.body.mostPopularSeq) {
+    if(req.body.mostPopularSeq && req.body.mostPopularSeq !== "null") {
       const data = await Event.findOne({mostPopularSeq:req.body.mostPopularSeq})
       if(data && data.mostPopularSeq !== event.mostPopularSeq && req.body.mostPopular) {
           data.mostPopularSeq = event.mostPopularSeq
