@@ -98,7 +98,6 @@ exports.getAllEvent = async (req, res) => {
       totalMostPopular,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
 };
@@ -122,7 +121,6 @@ exports.createEvent = async (req, res) => {
   let imageArr = [];
   let id = req.body.genre;
   try {
-
     const result = await checkId(id, Genre, ObjectId);
     if (!result) {
       return res
@@ -220,15 +218,23 @@ exports.updateEvent = async (req, res) => {
         .status(404)
         .send({ status: "failed", error: "genre Id is invalid" });
     }
-    if(req.body.mostPopularSeq && req.body.mostPopularSeq !== "null") {
-      const data = await Event.findOne({mostPopularSeq:req.body.mostPopularSeq})
-      if(data && data.mostPopularSeq !== event.mostPopularSeq && req.body.mostPopular) {
-          data.mostPopularSeq = event.mostPopularSeq
-          data.save();
+    if (req.body.mostPopularSeq && req.body.mostPopularSeq !== "null") {
+      const data = await Event.findOne({
+        mostPopularSeq: req.body.mostPopularSeq,
+      });
+      if (
+        data &&
+        data.mostPopularSeq !== event.mostPopularSeq &&
+        req.body.mostPopular
+      ) {
+        data.mostPopularSeq = event.mostPopularSeq;
+        data.save();
       }
     }
-   
-const upComingData = await Event.findOne({upComingSeq: req.body.upComingSeq})
+
+    const upComingData = await Event.findOne({
+      upComingSeq: req.body.upComingSeq,
+    });
 
     event.title = req.body.title;
     event.description = req.body.description;
@@ -238,10 +244,10 @@ const upComingData = await Event.findOne({upComingSeq: req.body.upComingSeq})
     event.venue = req.body.venue;
     event.location = req.body.location;
     event.genre = req.body.genre;
-    if(!req.body.mostPopular) {
-      event.mostPopularSeq = -1
-    } else {
-      event.mostPopularSeq = req.body.mostPopularSeq
+    if (!req.body.mostPopular) {
+      event.mostPopularSeq = -1;
+    } else if (!req.body.mostPopularSeq || req.body.mostPopularSeq !== "null") {
+      event.mostPopularSeq = req.body.mostPopularSeq;
     }
     event.eventOrgDetail = req.body.eventOrgDetail;
     event.published = req.body.published || false;
