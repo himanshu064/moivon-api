@@ -18,7 +18,7 @@ exports.getAllEvent = async (req, res) => {
   let genreId = req.query.genreId || undefined;
   let sort = req.query.sort || undefined;
   let order = req.query.order || undefined;
-  let earliest = req.query.earliest || undefined;
+  // let earliest = req.query.earliest || undefined;
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -49,12 +49,12 @@ exports.getAllEvent = async (req, res) => {
       const isUpComing = upComing.toLowerCase() === "true";
       query["upComing"] = isUpComing;
     }
-    if (earliest !== undefined) {
-      const isEarliest = earliest.toLowerCase() === "true"
-      if(isEarliest) {
-        query["startDate"] = {$gte: new Date()}
-      }
-    }
+    // if (earliest !== undefined) {
+    //   const isEarliest = earliest.toLowerCase() === "true"
+    //   if(isEarliest) {
+    //     query["startDate"] = {$gte: new Date()}
+    //   }
+    // }
     if (genreId !== undefined) {
       const result = await checkId(genreId, Genre, ObjectId);
       if (!result) {
@@ -64,6 +64,7 @@ exports.getAllEvent = async (req, res) => {
       }
       query["genre"] = genreId;
     }
+
     if (startDate) {
       query["$and"] = [
         { startDate: { $gte: startDate } },
@@ -71,20 +72,23 @@ exports.getAllEvent = async (req, res) => {
       ];
     }
     if (sort !== undefined) {
-      if (order !== undefined) {
+      if(sort == "earliest") {
+        query["startDate"] = {$gte: new Date()}
+        sortQuery["createdAt"] = "desc"
+      } else if (order !== undefined) {
         sortQuery[sort] = order;
       } else {
         sortQuery[sort] = "asc";
       }
     }
+
     const totalEvent = await Event.find(query);
     const totalMostPopular = await Event.find({
       mostPopular: true,
     }).countDocuments();
    
-   if( Object.keys(sortQuery).length === 0) {
-    sortQuery["createdAt"] = "desc"
-   }
+  sortQuery["createdAt"] = "desc"
+
     const event = await Event.find(query)
       .sort(sortQuery)
       .populate("images genre")
