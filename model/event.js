@@ -64,6 +64,18 @@ const eventSchema = new Schema(
     upComingSeq: {
       type: Number,
     },
+    eventUrl: {
+      type: String,
+    },
+    organizationUrl: {
+      type: String,
+    },
+    organization: {
+      type: String,
+    },
+    organizationIcon: {
+      type: String,
+    },
   },
   { timestamps: true },
   { collection: "events" }
