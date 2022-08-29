@@ -1,6 +1,7 @@
 const { body, check } = require("express-validator");
 
 function eventValidation() {
+
   return [
     body("title")
       .not()
@@ -8,7 +9,7 @@ function eventValidation() {
       .isString()
       .withMessage("title field should be string"),
     body("description")
-      .isString()
+      .isString().optional({ nullable: true })
       .withMessage("description field should be string"),
     body("price")
       // .not()
@@ -34,6 +35,18 @@ function eventValidation() {
     body("eventOrgDetail")
       .isString()
       .withMessage("eventOrgDetail field should be string"),
+      body("eventUrl")
+      .isString().optional({ nullable: true })
+      .withMessage("eventUrl field should be string"),
+      body("organizationUrl")
+      .isString().optional({ nullable: true })
+      .withMessage("organizationUrl field should be string"),
+      body("organization")
+      .isString().optional({ nullable: true })
+      .withMessage("organization field should be string"),
+      body("organizationIcon")
+     .isBase64().optional({ nullable: true })
+      .withMessage("organizationIcon field should be Base64"),
   ];
 }
 

@@ -18,6 +18,7 @@ exports.getAllEvent = async (req, res) => {
   let genreId = req.query.genreId || undefined;
   let sort = req.query.sort || undefined;
   let order = req.query.order || undefined;
+  let earliest = req.query.earliest || undefined;
   try {
     //if start date is present but enddate not
     if (startDate !== undefined && endDate === undefined) {
@@ -48,6 +49,12 @@ exports.getAllEvent = async (req, res) => {
       const isUpComing = upComing.toLowerCase() === "true";
       query["upComing"] = isUpComing;
     }
+    if (earliest !== undefined) {
+      const isEarliest = earliest.toLowerCase() === "true"
+      if(isEarliest) {
+        query["startDate"] = {$gte: new Date()}
+      }
+    }
     if (genreId !== undefined) {
       const result = await checkId(genreId, Genre, ObjectId);
       if (!result) {
@@ -70,11 +77,14 @@ exports.getAllEvent = async (req, res) => {
         sortQuery[sort] = "asc";
       }
     }
-    const totalEvent = await Event.find(query).sort({ price: "asc" });
+    const totalEvent = await Event.find(query);
     const totalMostPopular = await Event.find({
       mostPopular: true,
     }).countDocuments();
-
+   
+   if( Object.keys(sortQuery).length === 0) {
+    sortQuery["createdAt"] = "desc"
+   }
     const event = await Event.find(query)
       .sort(sortQuery)
       .populate("images genre")
@@ -121,6 +131,7 @@ exports.createEvent = async (req, res) => {
   let imageArr = [];
   let id = req.body.genre;
   try {
+
     const result = await checkId(id, Genre, ObjectId);
     if (!result) {
       return res
@@ -154,6 +165,10 @@ exports.createEvent = async (req, res) => {
         mostPopular: req.body.mostPopular || false,
         upComing: req.body.upComing || false,
         genre: req.body.genre,
+        organization: req.body.organization,
+        organizationUrl: req.body.organizationUrl,
+        eventUrl: req.body.eventUrl,
+        organizationIcon: req.body.organizationIcon,
       });
       event.save();
       // looping on all images user has entered
@@ -251,6 +266,10 @@ exports.updateEvent = async (req, res) => {
     event.venue = req.body.venue;
     event.location = req.body.location;
     event.genre = req.body.genre;
+    event.organization = req.body.organization;
+    event.organizationUrl = req.body.organizationUrl;
+    event.eventUrl = req.body.eventUrl;
+    event.organizationIcon = req.body.organizationIcon;
     // if (!req.body.mostPopular) {
     //   event.mostPopularSeq = -1;
     // } else
