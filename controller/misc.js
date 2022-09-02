@@ -21,7 +21,7 @@ exports.contactUs = async (req, res) => {
 
     var mailOptions = {
       from: email,
-      to: "gs7788264@gmail.com",
+      to: process.env.USER_EMAIL,
       subject: "moivon contact us",
       html: htmlData
     };
