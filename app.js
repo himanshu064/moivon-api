@@ -15,6 +15,7 @@ const userRouter = require("./router/user");
 const eventRouter = require("./router/event");
 const genreRouter = require("./router/genre");
 const heroImageRouter = require("./router/heroImageDetails");
+const miscRouter = require("./router/misc");
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.json());
@@ -79,6 +80,7 @@ app.use("/", userRouter);
 app.use("/events", eventRouter);
 app.use("/genres", genreRouter);
 app.use("/heroimage", heroImageRouter);
+app.use("/misc",miscRouter)
 app.use((err, req, res, next) => {
   console.log(err, "error here!");
   res.status(404).send({

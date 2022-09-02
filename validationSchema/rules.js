@@ -91,6 +91,34 @@ function heroImageValidation() {
       .withMessage("description field slould be string"),
   ];
 }
+
+function heroImageValidation() {
+  return [
+    body("description")
+      .isString()
+
+      .withMessage("description field slould be string"),
+  ];
+}
+function contactUsValidation() {
+  return [
+    body("name")
+    .not().isEmpty()
+      .isString()
+      .withMessage("name field slould be string and not empty"),
+      body("email")
+      .not().isEmpty()
+      .isEmail()
+      .withMessage("email field slould be of email structure and empty"),
+      body("phone")
+      .isNumeric().optional({ nullable: true })
+      .withMessage("name field slould be number"),
+      body("message")
+      .not().isEmpty()
+      .isString()
+      .withMessage("message field slould be string and not empty"),
+  ];
+}
 module.exports = {
   signupValidation,
   loginValidation,
@@ -98,4 +126,5 @@ module.exports = {
   newPasswordValidation,
   changePasswordValidation,
   heroImageValidation,
+  contactUsValidation
 };
