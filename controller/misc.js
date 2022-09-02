@@ -20,8 +20,8 @@ exports.contactUs = async (req, res) => {
     });
 
     var mailOptions = {
-      from: "info@moivon.com",
-      to: email,
+      from: email,
+      to: "gs7788264@gmail.com",
       subject: "moivon contact us",
       html: htmlData
     };
