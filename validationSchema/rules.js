@@ -103,20 +103,32 @@ function heroImageValidation() {
 function contactUsValidation() {
   return [
     body("name")
-    .not().isEmpty()
+      .not()
+      .isEmpty()
       .isString()
       .withMessage("name field slould be string and not empty"),
-      body("email")
-      .not().isEmpty()
+    body("email")
+      .not()
+      .isEmpty()
       .isEmail()
       .withMessage("email field slould be of email structure and empty"),
-      body("phone")
-      .isNumeric().optional({ nullable: true })
+    body("phone")
+      .isNumeric()
+      .optional({ nullable: true })
       .withMessage("name field slould be number"),
-      body("message")
-      .not().isEmpty()
+    body("message")
+      .not()
+      .isEmpty()
       .isString()
       .withMessage("message field slould be string and not empty"),
+  ];
+}
+function newsLetterValidation() {
+  return [
+    body("email")
+      .not()
+      .isEmpty()
+      .isEmail().withMessage("email key should hold email structure type data and it should not be empty"),
   ];
 }
 module.exports = {
@@ -126,5 +138,6 @@ module.exports = {
   newPasswordValidation,
   changePasswordValidation,
   heroImageValidation,
-  contactUsValidation
+  contactUsValidation,
+  newsLetterValidation
 };
