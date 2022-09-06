@@ -73,7 +73,9 @@ exports.getNewsLetter = async (req, res) => {
       .status(400)
       .send({ status: "failed",error:"page number should greater then 0"})
     }
-    const newsLetter = await NewsLetter.find()
+    let sortQuery = {};
+    sortQuery["createdAt"] = "desc";
+    const newsLetter = await NewsLetter.find().sort(sortQuery)
       .skip(skipLetter)
       .limit(noOfLetter);
     res
