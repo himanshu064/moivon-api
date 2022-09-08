@@ -78,12 +78,14 @@ exports.getNewsLetter = async (req, res) => {
     const newsLetter = await NewsLetter.find().sort(sortQuery)
       .skip(skipLetter)
       .limit(noOfLetter);
+      const totalNewsLetters = await NewsLetter.find().countDocuments()
     res
       .status(200)
       .send({
         status: "success",
         pageNo: page,
         pageLimit: noOfLetter,
+        totalNewsLetters,
         data: newsLetter,
       });
   } catch (err) {
