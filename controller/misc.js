@@ -45,14 +45,14 @@ exports.contactUs = async (req, res) => {
 };
 
 exports.postNewsLetter = async (req, res) => {
-  let newsLetter
+  let newsLetter;
   try {
-     newsLetter = await NewsLetter.findOne({email: req.body.email});
+    newsLetter = await NewsLetter.findOne({ email: req.body.email });
     if (newsLetter) {
-      newsLetter.email = req.body.email
+      newsLetter.email = req.body.email;
       newsLetter.save();
     } else {
-       newsLetter = await NewsLetter({
+      newsLetter = await NewsLetter({
         email: req.body.email,
       });
       newsLetter.save();
@@ -68,26 +68,25 @@ exports.getNewsLetter = async (req, res) => {
   let noOfLetter = req.query.size ?? 10;
   let skipLetter = (page - 1) * noOfLetter;
   try {
-    if (page <1) {
-     return  res
-      .status(400)
-      .send({ status: "failed",error:"page number should greater then 0"})
+    if (page < 1) {
+      return res
+        .status(400)
+        .send({ status: "failed", error: "page number should greater then 0" });
     }
     let sortQuery = {};
     sortQuery["createdAt"] = "desc";
-    const newsLetter = await NewsLetter.find().sort(sortQuery)
+    const newsLetter = await NewsLetter.find()
+      .sort(sortQuery)
       .skip(skipLetter)
       .limit(noOfLetter);
-      const totalNewsLetters = await NewsLetter.find().countDocuments()
-    res
-      .status(200)
-      .send({
-        status: "success",
-        pageNo: page,
-        pageLimit: noOfLetter,
-        totalNewsLetters,
-        data: newsLetter,
-      });
+    const totalNewsLetters = await NewsLetter.find().countDocuments();
+    res.status(200).send({
+      status: "success",
+      pageNo: page,
+      pageLimit: noOfLetter,
+      totalNewsLetters,
+      data: newsLetter,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send({ status: "failed", error: err });
@@ -95,66 +94,66 @@ exports.getNewsLetter = async (req, res) => {
 };
 
 exports.putNewsLetter = async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
   try {
-   const result = await checkId(id,NewsLetter,ObjectId)
+    const result = await checkId(id, NewsLetter, ObjectId);
     if (!result) {
-      return res
-        .status(404)
-        .send({ status: "failed", error: "Id is invalid" });
+      return res.status(404).send({ status: "failed", error: "Id is invalid" });
     }
-    const newsLetter = await NewsLetter.findById({_id: id});
-    if(newsLetter == null) {
-     return res.status(404).send({status:"failed", error: "invalid id"})
+    const newsLetter = await NewsLetter.findById({ _id: id });
+    if (newsLetter == null) {
+      return res.status(404).send({ status: "failed", error: "invalid id" });
     }
     newsLetter.email = req.body.email;
     newsLetter.save();
-    res.status(200).send({status:"success",data: newsLetter})
+    res.status(200).send({ status: "success", data: newsLetter });
   } catch (err) {
     console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
-}
+};
 exports.deleteNewsLetter = async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
   try {
-    const result = await checkId(id,NewsLetter,ObjectId)
+    const result = await checkId(id, NewsLetter, ObjectId);
     if (!result) {
-      return res
-        .status(404)
-        .send({ status: "failed", error: "Id is invalid" });
+      return res.status(404).send({ status: "failed", error: "Id is invalid" });
     }
-    const newsLetter = await NewsLetter.findByIdAndRemove({_id: id});
+    const newsLetter = await NewsLetter.findByIdAndRemove({ _id: id });
     if (newsLetter == undefined || null) {
       return res.status(404).send({ status: "failed", error: "invalid id" });
     }
-    res.status(200).send({status:"success", data: newsLetter})
+    res.status(200).send({ status: "success", data: newsLetter });
   } catch (err) {
     console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
-}
+};
 exports.deleteNewsLetters = async (req, res) => {
-  const ids = req.body.ids
+  const ids = req.body.ids;
   try {
     if (!ids || ids.length == 0) {
       return res
-      .status(404)
-      .send({ status: "failed", error: "invalid id array" });
+        .status(404)
+        .send({ status: "failed", error: "invalid id array" });
     }
     const newsLetters = await NewsLetter.deleteMany({
       _id: { $in: ids },
     });
-    console.log(newsLetters);
     if (!newsLetters || newsLetters.deletedCount < 1) {
       return res.status(404).send({ status: "failed", error: "invalid id" });
     }
-    return res.status(404).send({ status: "success", error: "news letters deleted successfully" });
+    return res
+      .status(200)
+      .send({
+        status: "success",
+        message: "news letters deleted successfully",
+      });
   } catch (err) {
     console.log(err);
     res.status(500).send({ status: "failed", error: err });
   }
-}
+};
 async function checkId(id, Model, ObjectId) {
   if (ObjectId.isValid(id)) {
     const data = await Model.findById(id);
