@@ -112,10 +112,6 @@ function contactUsValidation() {
       .isEmpty()
       .isEmail()
       .withMessage("email field slould be of email structure and empty"),
-    body("phone")
-      .isNumeric()
-      .optional({ nullable: true })
-      .withMessage("name field slould be number"),
     body("message")
       .not()
       .isEmpty()
