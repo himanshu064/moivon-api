@@ -87,13 +87,19 @@ exports.getAllEvent = async (req, res) => {
       mostPopular: true,
     }).countDocuments();
    
-  sortQuery["createdAt"] = "desc"
-
-    const event = await Event.find(query)
-      .sort(sortQuery)
-      .populate("images genre")
-      .skip(skipEvent)
-      .limit(noOfEvent);
+  sortQuery["createdAt"] = "desc";
+  let event;
+    sortQuery?.latest === "desc"
+      ? (event = await Event.find(query)
+          .sort({ startDate: -1 })
+          .populate("images genre")
+          .skip(skipEvent)
+          .limit(noOfEvent))
+      : (event = await Event.find(query)
+          .sort({ startDate: 1 })
+          .populate("images genre")
+          .skip(skipEvent)
+          .limit(noOfEvent));
 
     //adding image to each event
     // for (i = 0; i < event.length; i++) {
