@@ -72,8 +72,8 @@ exports.getAllEvent = async (req, res) => {
       ];
     }
     if (sort !== undefined) {
-      if(sort == "earliest") {
-        query["startDate"] = {$gte: new Date()}
+      if(sort === "earliest") {
+        query["endDate"] = { $gte: new Date() }
         sortQuery["createdAt"] = "desc"
       } else if (order !== undefined) {
         sortQuery[sort] = order;
