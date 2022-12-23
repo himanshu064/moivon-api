@@ -5,6 +5,7 @@ const { eventValidation } = require("../validationSchema/eventRules");
 const validate = require("../validationSchema/validationMiddleware");
 const isAuth = require("../middleware/isAuth");
 
+router.get("/admin", eventController.getAlAdminlEvent);
 router.get("/:id", eventController.getById);
 router.get("/", eventController.getAllEvent);
 router.post("/", eventValidation(), validate, eventController.createEvent);

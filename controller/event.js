@@ -121,7 +121,115 @@ exports.getAllEvent = async (req, res) => {
     res.status(500).send({ status: "failed", error: err });
   }
 };
+exports.getAlAdminlEvent = async (req, res) => {
+  let page = req.query.page ?? 1;
+  let noOfEvent = req.query.size ?? 10;
+  let skipEvent = (page - 1) * noOfEvent;
+  let published = req.query.published ?? undefined;
+  let startDate = req.query.startDate ?? undefined;
+  let endDate = req.query.endDate ?? undefined;
+  let mostPopular = req.query.mostPopular ?? undefined;
+  let upComing = req.query.upComing ?? undefined;
+  let genreId = req.query.genreId || undefined;
+  let sort = req.query.sort || undefined;
+  let order = req.query.order || undefined;
+  // let earliest = req.query.earliest || undefined;
+  try {
+    //if start date is present but enddate not
+    if (startDate !== undefined && endDate === undefined) {
+      endDate = moment(
+        moment(new Date()).format("YYYY-MM-") + moment().daysInMonth()
+      ).toISOString();
+      // new Date
 
+      // Boolean("false")
+    } else if (startDate === undefined && endDate !== undefined) {
+      //if enddate present but start date not
+      startDate = moment(moment().format("YYYY-MM-01")).toISOString();
+    }
+    let query = {},
+      sortQuery = {};
+    if (published !== undefined) {
+      //converting string true/false into boolen true/false
+      const isPublished = published.toLowerCase() === "true";
+      query["published"] = isPublished;
+    }
+    if (mostPopular !== undefined) {
+      //converting string true/false into boolen true/false
+      const isMostPopular = mostPopular.toLowerCase() === "true";
+      query["mostPopular"] = isMostPopular;
+    }
+    if (upComing !== undefined) {
+      //converting string true/false into boolen true/false
+      const isUpComing = upComing.toLowerCase() === "true";
+      query["upComing"] = isUpComing;
+    }
+    // if (earliest !== undefined) {
+    //   const isEarliest = earliest.toLowerCase() === "true"
+    //   if(isEarliest) {
+    //     query["startDate"] = {$gte: new Date()}
+    //   }
+    // }
+    if (genreId !== undefined) {
+      const result = await checkId(genreId, Genre, ObjectId);
+      if (!result) {
+        return res
+          .status(404)
+          .send({ status: "failed", error: "genre Id is invalid" });
+      }
+      query["genre"] = genreId;
+    }
+
+    if (startDate) {
+      query["$and"] = [
+        { startDate: { $gte: startDate } },
+        { startDate: { $lte: endDate } },
+      ];
+    }
+    if (sort !== undefined) {
+      if(sort == "earliest") {
+        query["startDate"] = {$gte: new Date()}
+        sortQuery["createdAt"] = "desc"
+      } else if (order !== undefined) {
+        sortQuery[sort] = order;
+      } else {
+        sortQuery[sort] = "asc";
+      }
+    }
+
+    const totalEvent = await Event.find(query);
+    const totalMostPopular = await Event.find({
+      mostPopular: true,
+    }).countDocuments();
+   
+  sortQuery["createdAt"] = "desc"
+
+    const event = await Event.find(query)
+      .sort(sortQuery)
+      .populate("images genre")
+      .skip(skipEvent)
+      .limit(noOfEvent);
+
+    //adding image to each event
+    // for (i = 0; i < event.length; i++) {
+    //   const eventid = event[i]._id;
+    //   const image = await Image.find({ eventId: eventid });
+    //   event[i].images = image;
+    // }
+
+    res.status(200).send({
+      status: "success",
+      pageNo: page,
+      pageLimit: noOfEvent,
+      totalEvent: totalEvent.length,
+      eventPresent: event.length,
+      data: event,
+      totalMostPopular,
+    });
+  } catch (err) {
+    res.status(500).send({ status: "failed", error: err });
+  }
+};
 exports.getById = async (req, res) => {
   let id = req.params.id;
 
